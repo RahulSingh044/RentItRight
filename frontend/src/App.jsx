@@ -1,16 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import routes from "./app/routes";
+import GuestHome from "./pages/GuestHome";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {routes.map((route, index) => (
-          <Route key={index} {...route} />
-        ))}
-      </Routes>
-    </BrowserRouter>
-  );
+  return <GuestHome />;
 }
 
 export default App;
