@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-
+import { Link } from 'react-router-dom'
 const categories = [
   { title: "Electronics", count: "240+ items", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8" },
   { title: "Furniture", count: "150+ items", image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" },
@@ -23,9 +23,9 @@ export default function Categories() {
             </p>
           </div>
 
-          <button className="text-bright font-bold hover:underline flex gap-2">
+          <Link to="/explore" className="text-bright font-bold hover:underline flex gap-2">
             View All <ArrowRight />
-          </button>
+          </Link>
         </div>
 
         {/* Grid */}

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden py-25  bg-app">
@@ -19,10 +20,10 @@ export default function Hero() {
             </p>
 
             <div className="flex gap-4">
-              <button className="bg-accent text-white font-bold hover:bg-accent-hover
+              <Link to="/explore" className="bg-accent text-white font-bold hover:bg-accent-hover
  px-12 py-4 rounded-3xl">
                 Rent Items
-              </button>
+              </Link>
               <button className="border-2  border-bright text-text-primary bg-app hover:bg-bright
  px-12 py-4 rounded-3xl font-bold">
                 List Your Items
