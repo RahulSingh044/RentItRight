@@ -3,11 +3,11 @@ import Steps from "../../components/guest_ui/guest_dashboard/Steps";
 import Categories from "../../components/guest_ui/guest_dashboard/Categories";
 
 
-export default function GuestHome() {
+const GuestHome=()=> {
   return (
     <>
       <main className="pt-20">
-        <Hero />
+        <Hero/>
         <Steps />
         <Categories/>
         {/* Trust */}
@@ -17,3 +17,5 @@ export default function GuestHome() {
     </>
   );
 }
+
+export default GuestHome;

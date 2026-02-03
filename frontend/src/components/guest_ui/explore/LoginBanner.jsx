@@ -1,4 +1,9 @@
+import { useState } from "react";
+import AuthController from "../../auth/AuthController";
 export default function LoginBanner() {
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+
   return (
     <div className="mb-10 w-full rounded-xl bg-accent/15 border border-accent/40 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="flex items-center gap-4">
@@ -15,9 +20,19 @@ export default function LoginBanner() {
         </div>
       </div>
 
-      <button className="bg-accent text-text-primary px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-accent-hover">
+      <button className="bg-accent text-text-primary px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-accent-hover" 
+      onClick={
+        ()=>{
+          setAuthOpen(true);
+        }}>
         Sign In / Sign Up
       </button>
+
+      <AuthController
+        open={authOpen}
+        onClose={()=>setAuthOpen(false)}
+        defaultMode={authMode}
+      />
     </div>
   );
 }

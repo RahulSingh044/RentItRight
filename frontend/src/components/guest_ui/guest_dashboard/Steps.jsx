@@ -24,7 +24,7 @@ const steps = [
 
 export default function Steps() {
   return (
-    <section className="bg-app py-28 border-y border-divider">
+    <section id="steps" className="bg-app py-28 border-y border-divider scroll-mt-24">
       <div className="max-w-[1400px] mx-auto px-6">
 
         {/* Section header */}

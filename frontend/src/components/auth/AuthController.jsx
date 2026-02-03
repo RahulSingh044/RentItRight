@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import AuthModal from "./AuthModal";
 
 import Login from "../../pages/auth/Login";
@@ -10,6 +10,9 @@ export default function AuthController({ open, onClose, defaultMode = "login" })
   const [mode, setMode] = useState(defaultMode);
   const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    setMode(defaultMode);
+  }, [defaultMode]);
   const switchMode = (next) => setMode(next);
 
   const screens = {

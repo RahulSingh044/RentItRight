@@ -5,6 +5,7 @@ import AvailabilityCalendar from "../../components/guest_ui/item_detail/Availabi
 // import OwnerCard from "../../components/guest_ui/item_detail/OwnerCard";
 
 export default function ItemDetail() {
+    
     return (
         <main className="max-w-[1400px] mx-auto px-6 lg:px-20 pt-30 ">
             {/* Breadcrumb */}

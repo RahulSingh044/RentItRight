@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import AuthController from "../auth/AuthController";
-export default function Navbar() {
+const Navbar = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login");
 
@@ -24,7 +24,11 @@ export default function Navbar() {
             >
               Explore
             </Link>
-            <a className="text-sm text-text-secondary hover:text-text-primary" href="#">
+            <a className="text-sm text-text-secondary hover:text-text-primary"
+              onClick={() => {
+                const el = document.getElementById("steps");
+                el?.scrollIntoView({ behavior: "smooth" });
+              }}>
               How it Works
             </a>
           </nav>
@@ -57,3 +61,4 @@ export default function Navbar() {
     </header>
   );
 }
+export default Navbar;

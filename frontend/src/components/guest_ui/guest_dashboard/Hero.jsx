@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
-export default function Hero() {
+import { useState } from "react";
+import AuthController from "../../auth/AuthController";
+const Hero = ()=> {
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("register");
+
   return (
     <section className="relative overflow-hidden py-25  bg-app">
       <div className="max-w-[1400px] mx-auto px-6">
@@ -25,9 +30,18 @@ export default function Hero() {
                 Rent Items
               </Link>
               <button className="border-2  border-bright text-text-primary bg-app hover:bg-bright
- px-12 py-4 rounded-3xl font-bold">
+ px-12 py-4 rounded-3xl font-bold " 
+ 
+                onClick={() => {
+                  setAuthOpen(true);
+                }}>
                 List Your Items
               </button>
+               <AuthController
+                  open={authOpen}
+                  onClose={() => setAuthOpen(false)}
+                  defaultMode={authMode}
+                />
             </div>
           </div>
 
@@ -44,3 +58,5 @@ export default function Hero() {
     </section>
   );
 }
+
+export default Hero;

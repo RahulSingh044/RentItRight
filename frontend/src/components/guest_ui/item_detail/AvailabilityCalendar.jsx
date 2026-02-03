@@ -1,12 +1,18 @@
 import { useState } from "react";
+import AuthController from "../../auth/AuthController";
 
 const WEEKDAYS = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
 const MONTHS = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December"
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
 ];
 
 export default function AvailabilityCalendar() {
+
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+
+
   const today = new Date();
 
   const [year, setYear] = useState(today.getFullYear());
@@ -94,10 +100,9 @@ export default function AvailabilityCalendar() {
               key={date}
               className={`
                 p-2 text-xs rounded-md transition
-                ${
-                  isUnavailable || isPast
-                    ? "text-text-secondary border-1 line-through cursor-not-allowed border-bright/20"
-                    : "bg-bright/20 text-text-primary hover:bg-bright/30 cursor-pointer"
+                ${isUnavailable || isPast
+                  ? "text-text-secondary border-1 line-through cursor-not-allowed border-bright/20"
+                  : "bg-bright/20 text-text-primary hover:bg-bright/30 cursor-pointer"
                 }
               `}
             >
@@ -116,13 +121,20 @@ export default function AvailabilityCalendar() {
       </button>
 
       <p className="text-xs text-center text-text-secondary">
-        <span className="text-bright underline cursor-pointer">
+        <button className="text-bright underline cursor-pointer"
+          onClick={() => {
+            setAuthOpen(true);
+          }}>
           Login or Register
-        </span>{" "}
+        </button>{" "}
         to check specific dates and book this gear.
       </p>
+      <AuthController
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        defaultMode={authMode}
+      />
 
-    
     </div>
   );
 }

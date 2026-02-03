@@ -8,7 +8,7 @@ import {
   Flag,
 } from "lucide-react";
 
-const VerifyOtp = ({email}) => {
+const VerifyOtp = ({email, switchMode}) => {
 
   console.log("Verifying OTP for email:", email);
 
@@ -56,6 +56,7 @@ const VerifyOtp = ({email}) => {
                        shadow-lg shadow-primary/20 
                        flex items-center justify-center gap-2 
                        transition-transform active:scale-[0.98]"
+            onClick={()=>switchMode("success")}
           >
             Verify Identity
             <ShieldCheck className="w-5 h-5" />
