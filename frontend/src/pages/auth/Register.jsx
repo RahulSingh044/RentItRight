@@ -1,4 +1,6 @@
 import AuthLayout from "../../components/auth/AuthLayout";
+import { useState } from "react";
+
 import {
   Mail,
   Lock,
@@ -7,7 +9,9 @@ import {
   LockKeyhole
 } from "lucide-react";
 
-const Register = () => {
+const Register = ({switchMode, email, setEmail}) => {
+
+
   return (
     <AuthLayout>
       <div className="p-8 md:p-10">
@@ -37,6 +41,8 @@ const Register = () => {
               <input
                 type="email"
                 placeholder="name@example.com"
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
                 className="form-input w-full pl-12 pr-4 py-3 bg-app border-1  border-text-secondary/30 rounded-2xl text-text-primary placeholder:text-text-secondary/30 focus:outline-none transition
                 focus:border-bright"
               />
@@ -110,6 +116,7 @@ const Register = () => {
             className="w-full bg-accent hover:bg-accent/90 text-white font-bold 
                        py-3 px-6 rounded-2xl text-base shadow-lg transition-all 
                        active:scale-[0.98] mt-2 border border-accent/20"
+            onClick={(e) => { e.preventDefault(); switchMode("otp"); }}
           >
             Create Account
           </button>
@@ -147,7 +154,7 @@ const Register = () => {
         <div className="mt-8 pt-8 border-t border-border-muted text-center">
           <p className="text-text-secondary text-sm">
             Already have an account?
-            <button className="text-bright font-semibold hover:text-bright/80 transition-colors ml-1">
+            <button className="text-bright font-semibold hover:text-bright/80 transition-colors ml-1" onClick={() => switchMode("login")}>
               Log in
             </button>
           </p>

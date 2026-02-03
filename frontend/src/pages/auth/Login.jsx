@@ -4,7 +4,7 @@ import { Mail } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
 
 
-const Login = () => {
+const Login = ({ switchMode }) => {
   return (
     <AuthLayout>
 
@@ -103,7 +103,7 @@ const Login = () => {
       <div className="bg-background-dark/60 px-8 py-5 border-t border-divider text-center">
         <p className="text-text-secondary text-sm">
           Don’t have an account?
-          <button className="text-bright font-semibold hover:underline ml-1">
+          <button className="text-bright font-semibold hover:underline ml-1" onClick={() => switchMode("register")}>
             Register
           </button>
         </p>

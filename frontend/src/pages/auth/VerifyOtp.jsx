@@ -8,7 +8,10 @@ import {
   Flag,
 } from "lucide-react";
 
-const VerifyOtp = () => {
+const VerifyOtp = ({email}) => {
+
+  console.log("Verifying OTP for email:", email);
+
   return (
     <AuthLayout>
       <div className="p-10">
