@@ -1,36 +1,51 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import GuestLayout from "./layouts/GuestLayout";
+
 import GuestHome from "./pages/guest/GuestHome";
 import Explore from "./pages/guest/Explore";
 import ItemDetail from "./pages/guest/ItemDetail";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Navbar from "./components/guest_ui/Navbar";
-import Footer from "./components/guest_ui/Footer";
-import Login from "./pages/auth/Login";
-import CompleteProfile from "./pages/auth/CompleteProfile";
-import Register from "./pages/auth/Register";
-import VerifyOtp from "./pages/auth/VerifyOtp";
-import Success from "./pages/auth/Success";
+
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import RenterDashboard from "./pages/renter/RenterDashboard";
+import OwnerLayout from "./layouts/OwnerLayout";
+import RenterLayout from "./layouts/RenterLayout";
+import Rentals from "./pages/renter/Rentals";
+import RentalDetails from "./pages/renter/RentalDetails";
+import RenterExplore from "./pages/renter/RenterExplore";
 
 
 function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
 
-  return(
-  <BrowserRouter>
-    <Navbar/>
-    <Routes>
-        <Route path="/" element={<GuestHome />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/item/:id" element={<ItemDetail />} />
-        
-    </Routes>
-    <Footer/>
-    {/* <Login/>
-    <Register/>
-    <VerifyOtp/>
-    <CompleteProfile/>
-    <Success/> */}
-  </BrowserRouter>
+        {/* Guest pages with Navbar + Footer */}
+        <Route element={<GuestLayout />}>
+          <Route path="/" element={<GuestHome />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/item/:id" element={<ItemDetail />} />
+        </Route>
+
+
+        {/* Renter pages with Navbar + Footer */}
+        <Route element={<RenterLayout />}>
+          <Route path="/renter" element={<RenterDashboard />} />
+          <Route path="/rentals" element={<Rentals />} />
+          <Route path="/rentals/:rentalId" element={<RentalDetails />} />
+          <Route path="/renter_explore" element={<RenterExplore />} />
+          
+
+        </Route>
+
+        {/* Owner pages with Navbar + Footer */}
+        <Route element={<OwnerLayout />}>
+          <Route path="/owner" element={<OwnerDashboard />} />
+        </Route>
+
+      </Routes>
+    </BrowserRouter>
   );
-
 }
 
 export default App;

@@ -1,12 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import AuthController from "../auth/AuthController";
 const Navbar = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login");
 
+  const navItemClass = ({ isActive }) =>
+  [
+    "flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-200",
+    "text-sm font-medium",
+    isActive
+      ? "bg-accent text-white"
+      : "text-text-secondary hover:text-text-primary hover:bg-white/5",
+  ].join(" ");
+
 
   return (
+
+
     <header className="fixed top-0 w-full z-50 border-b border-divider  bg-app">
       <div className="max-w-[1450px] mx-auto px-6 h-20 flex items-center justify-between">
 
@@ -18,12 +29,13 @@ const Navbar = () => {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            <Link
+            <NavLink
               to="/explore"
-              className="text-sm text-text-secondary hover:text-text-primary"
+              className={navItemClass}
+
             >
               Explore
-            </Link>
+            </NavLink>
             <a className="text-sm text-text-secondary hover:text-text-primary"
               onClick={() => {
                 const el = document.getElementById("steps");
