@@ -20,3 +20,6 @@ const ExploreFilters = ({ filters, onChange }) => {
 };
 
 export default ExploreFilters;
+
+
+// Fix the filter UI

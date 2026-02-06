@@ -16,25 +16,42 @@ const RenterExplore = () => {
   const [loading, setLoading] = useState(false);
 
 
-   useEffect(() => {
+  useEffect(() => {
     // TEMP: load dummy data
     setRentals(renterExploreDummy);
   }, []);
+
+
+  const filteredRentals =
+    search.trim() === ""
+      ? rentals
+      : rentals.filter((item) =>
+        item.title?.toLowerCase().includes(search.toLowerCase())
+      );
+
+  const ITEMS_PER_PAGE = 8;
+
+  const visibleRentals = filteredRentals.slice(
+    0,
+    page * ITEMS_PER_PAGE
+  );  
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 lg:px-20 py-8 pt-25">
+    <div className="mx-auto max-w-7xl px-6 lg:px-20 py-8 pt-30">
       <ExploreSearchBar value={search} onChange={setSearch} />
 
-      <ExploreFilters filters={filters} onChange={setFilters} />
+      {/* <ExploreFilters filters={filters} onChange={setFilters} /> */}
 
       {rentals.length === 0 && !loading ? (
         <ExploreEmptyState />
       ) : (
-        <ExploreGrid rentals={rentals} />
+        <ExploreGrid rentals={visibleRentals} />
       )}
 
       <ExploreLoadMore
         loading={loading}
-        onLoadMore={() => setPage((p) => p + 1)}
+        onLoadMore={() => {
+          setPage(p => p + 1);
+        }}
       />
     </div>
   );

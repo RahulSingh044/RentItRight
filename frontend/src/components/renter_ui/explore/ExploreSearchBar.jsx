@@ -1,20 +1,23 @@
+import { Search } from "lucide-react";
 const ExploreSearchBar = ({ value, onChange }) => {
   return (
-    <div className="max-w-2xl mb-8">
-      <div className="relative">
-        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
-          search
-        </span>
+    <div className="mb-10">
+      <div className="relative max-w-3xl mx-auto rounded-3xl bg-card border border-divider flex items-center h-14 px-4">
+    
+        <Search className="text-text-secondary mr-3"/>
         <input
-          value={value}
+        value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Search rentals..."
-          className="w-full h-12 rounded-xl border border-border-custom bg-surface pl-12 pr-4 text-sm outline-none focus:border-accent/50"
+          className="w-full bg-transparent outline-none text-text-primary placeholder:text-text-secondary"
+          placeholder="Search items near you..."
         />
+
+        <button className="ml-2 bg-accent text-text-primary font-bold px-4 py-1.5 rounded-lg text-sm">
+          Search
+        </button>
       </div>
     </div>
   );
 };
 
 export default ExploreSearchBar;
-``

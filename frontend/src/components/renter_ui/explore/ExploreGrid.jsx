@@ -1,4 +1,5 @@
 import ExploreCard from "./ExploreCard";
+import React from "react";
 
 const ExploreGrid = ({ rentals }) => {
     if (!rentals.length) {
@@ -10,7 +11,7 @@ const ExploreGrid = ({ rentals }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       {rentals.map((item) => (
         <ExploreCard key={item.id} item={item} />
       ))}
@@ -18,4 +19,4 @@ const ExploreGrid = ({ rentals }) => {
   );
 };
 
-export default ExploreGrid;
+export default React.memo(ExploreGrid);
