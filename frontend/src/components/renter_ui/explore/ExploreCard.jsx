@@ -23,7 +23,7 @@ const ExploreCard = ({ item }) => {
         <div className="px-3 pt-3">
           <div
             className="relative h-44 w-full rounded-xl bg-white bg-cover bg-center shadow-inner transition-transform duration-300 group-hover:scale-[1.01]"
-            style={{ backgroundImage: `url(${item.images[0]})` }}
+            style={{ backgroundImage: `url(${item.image})` }}
           />
         </div>
 
@@ -49,7 +49,7 @@ const ExploreCard = ({ item }) => {
           {/* Price + Distance */}
           <div className="mt-3 flex items-center justify-between">
             <p className="text-lg font-bold text-bright">
-              ₹{item.pricePerDay}
+              ₹{item.pricing.daily}
               <span className="ml-1 text-[11px] font-medium text-text-secondary">
                 /day
               </span>

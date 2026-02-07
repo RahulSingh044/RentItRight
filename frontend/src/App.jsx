@@ -14,7 +14,7 @@ import Rentals from "./pages/renter/Rentals";
 import RentalDetails from "./pages/renter/RentalDetails";
 import RenterExplore from "./pages/renter/RenterExplore";
 import RenterItemDetails from "./pages/renter/RenterItemDetails"
-
+import RenterWishlist from "./pages/renter/RenterWishlist";
 
 function App() {
   return (
@@ -36,6 +36,7 @@ function App() {
           <Route path="/rentals/:rentalId" element={<RentalDetails />} />
           <Route path="/renter_explore" element={<RenterExplore />} />
           <Route path="/renter/rent_items/:id" element={<RenterItemDetails/>} />
+          <Route path="/wishlist" element={<RenterWishlist/>} />
           
 
         </Route>

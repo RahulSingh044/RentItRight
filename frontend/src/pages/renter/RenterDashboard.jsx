@@ -5,6 +5,7 @@ import StatsCard from "../../components/renter_ui/renter_dashboard/StatsCard";
 import BookingCard from "../../components/renter_ui/renter_dashboard/BookingCard";
 import QuickActions from "../../components/renter_ui/renter_dashboard/QuickActions";
 // import BecomeLenderCard from "../../components/renter_ui/renter_dashboard/BecomeLenderCard";
+import { Link } from "react-router-dom";
 
 export default function RenterDashboard() {
   /* 🔌 BACKEND READY DATA */
@@ -91,9 +92,9 @@ export default function RenterDashboard() {
           <div className="col-span-12 lg:col-span-8">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold">Current Bookings</h3>
-              <button className="text-bright text-sm font-bold hover:underline">
+              <Link to="/rentals" className="cursor-pointer text-bright text-sm font-bold hover:underline">
                 View All History
-              </button>
+              </Link>
             </div>
 
             <div className="flex flex-col gap-4">

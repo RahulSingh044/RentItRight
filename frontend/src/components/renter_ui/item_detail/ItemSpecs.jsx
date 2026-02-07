@@ -4,7 +4,7 @@ const ItemSpecs = ({ specs }) => {
       {specs.map((spec, i) => (
         <div
           key={i}
-          className="rounded-xl border border-border-custom bg-surface p-4"
+          className="rounded-xl border-1 border-app bg-surface p-4"
         >
           <p className="text-xs text-text-secondary">{spec.label}</p>
           <p className="font-bold mt-1">{spec.value}</p>

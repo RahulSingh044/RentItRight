@@ -1,22 +1,50 @@
+import { useState } from "react";
+
 const PricingSelector = ({ pricing }) => {
+  const [selectedPlan, setSelectedPlan] = useState("daily");
+
+  const priceMap = {
+    daily: { label: "day", value: pricing.daily },
+    weekly: { label: "week", value: pricing.weekly },
+    monthly: { label: "month", value: pricing.monthly },
+  };
+
   return (
-    <div className="mt-6">
-      <p className="text-sm text-text-secondary mb-2">Starting at</p>
+    <div className="mt-6 flex justify-between items-center border-b-1 border-divider pb-7">
 
-      <p className="text-3xl font-bold text-accent">
-        ₹{pricing.daily}
-        <span className="text-sm text-text-secondary ml-1">/day</span>
-      </p>
+      {/* Price display */}
+      <div className="min-w-[140px]">
+        <p className="text-sm text-text-secondary mb-1">Starting at</p>
 
-      <div className="mt-4 flex gap-2">
-        {["Daily", "Weekly", "Monthly"].map((p) => (
-          <button
-            key={p}
-            className="rounded-lg border border-border-custom px-4 py-1.5 text-xs hover:border-accent"
-          >
-            {p}
-          </button>
-        ))}
+        <p className="text-2xl font-bold text-bright">
+          ₹{priceMap[selectedPlan].value}
+          <span className="text-sm text-text-secondary ml-1">
+            /{priceMap[selectedPlan].label}
+          </span>
+        </p>
+      </div>
+
+      {/* Selector */}
+      <div className="mt-4 flex gap-0.5 bg-app p-1 rounded-xl border-1 border-divider">
+        {["daily", "weekly", "monthly"].map((plan) => {
+          const isActive = selectedPlan === plan;
+
+          return (
+            <button
+              key={plan}
+              onClick={() => setSelectedPlan(plan)}
+              className={`cursor-pointer rounded-lg px-4 py-1.5 text-xs transition
+                ${
+                  isActive
+                    ? "bg-bright text-black border-1 border-bright"
+                    : "border-1 border-app"
+                }
+              `}
+            >
+              {plan.charAt(0).toUpperCase() + plan.slice(1)}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

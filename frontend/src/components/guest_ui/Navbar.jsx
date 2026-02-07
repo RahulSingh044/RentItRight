@@ -10,7 +10,7 @@ const Navbar = () => {
     "flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-200",
     "text-sm font-medium",
     isActive
-      ? "bg-accent text-white"
+      ? "bg-bright text-white"
       : "text-text-secondary hover:text-text-primary hover:bg-white/5",
   ].join(" ");
 
@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center gap-3">
             <h2 className="text-2xl font-bold text-text-primary">
-              Rent It Right
+              Rent It <span className="text-bright">Right</span>
             </h2>
           </Link>
 
