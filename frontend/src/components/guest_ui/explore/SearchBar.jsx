@@ -10,7 +10,7 @@ export default function SearchBar() {
           placeholder="Search items near you..."
         />
 
-        <button className="ml-2 bg-accent text-text-primary font-bold px-4 py-1.5 rounded-lg text-sm">
+        <button className="ml-2 bg-bright text-text-primary font-bold px-4 py-1.5 rounded-lg text-sm">
           Search
         </button>
       </div>

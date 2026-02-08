@@ -19,7 +19,7 @@ const VerifyOtp = ({email, switchMode}) => {
         {/* Logo + Title */}
         <div className="flex flex-col items-center mb-10 text-center">
           
-          <h1 className="text-2xl font-semibold tracking-tight text-text-primary">
+          <h1 className="text-2xl font-extrabold cursor-pointer tracking-tight text-text-primary">
             Verify Your Account
           </h1>
           <p className="text-text-secondary/40 text-sm mt-2 leading-relaxed">
@@ -51,8 +51,8 @@ const VerifyOtp = ({email, switchMode}) => {
         <div className="space-y-6">
           <button
             type="button"
-            className="w-full h-14 bg-accent hover:bg-accent/90 
-                       text-white font-semibold rounded-2xl 
+            className="w-full h-14 bg-bright hover:bg-bright/90 
+                       text-card font-extrabold rounded-2xl 
                        shadow-lg shadow-primary/20 
                        flex items-center justify-center gap-2 
                        transition-transform active:scale-[0.98]"

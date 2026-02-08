@@ -15,7 +15,7 @@ const Hero = ()=> {
 
             <h1 className="text-7xl  leading-tight font-black text-white">
               Rent Anything. <br />
-              <span className="text-accent">
+              <span className="text-bright">
                 AnytimeLocally
               </span>
             </h1>
@@ -25,8 +25,8 @@ const Hero = ()=> {
             </p>
 
             <div className="flex gap-4">
-              <Link to="/explore" className="bg-accent text-white font-bold hover:bg-accent-hover
- px-12 py-4 rounded-3xl">
+              <Link to="/explore" className="bg-bright text-app cursor-pointer
+ px-12 py-4 rounded-3xl font-extrabold">
                 Rent Items
               </Link>
               <button className="border-2  border-bright text-text-primary bg-app hover:bg-bright

@@ -88,7 +88,7 @@ const Login = ({ switchMode ,onClose}) => {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full mt-6 bg-accent hover:bg-accent/80 text-white font-semibold py-3.5 rounded-2xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full mt-6 bg-bright hover:bg-bright/80 text-card font-extrabold py-3.5 rounded-2xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
             >
               Login
               <span className="material-symbols-outlined text-lg">

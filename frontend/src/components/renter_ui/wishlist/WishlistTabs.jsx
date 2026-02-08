@@ -1,20 +1,27 @@
-const tabs = ["All Saved", "Available Now", "Price Drops", "Out of Stock"];
-
-export default function WishlistTabs() {
+export default function WishlistTabs({ activeTab, onChange }) {
   return (
     <div className="flex gap-6 border-b border-divider mb-8">
-      {tabs.map((tab, index) => (
-        <button
-          key={index}
-          className={`pb-3 text-sm ${
-            index === 0
-              ? "text-accent border-b-2 border-accent"
-              : "text-muted"
-          }`}
-        >
-          {tab}
-        </button>
-      ))}
+      <button
+        onClick={() => onChange("all")}
+        className={`pb-3 text-sm border-b-5 cursor-pointer ${
+          activeTab === "all"
+            ? "text-bright border-bright"
+            : "text-text-secondary border-app"
+        }`}
+      >
+        All Saved
+      </button>
+
+      <button
+        onClick={() => onChange("available")}
+        className={`pb-3 text-sm cursor-pointer border-b-5 ${
+          activeTab === "available"
+            ? "text-bright border-bright"
+            : "text-text-secondary border-app"
+        }`}
+      >
+        Available Now
+      </button>
     </div>
   );
 }

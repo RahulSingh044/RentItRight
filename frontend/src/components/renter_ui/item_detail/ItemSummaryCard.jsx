@@ -1,6 +1,15 @@
+import { useNavigate, useParams } from "react-router-dom";
 import PricingSelector from "./PricingSelector";
 
+
 const ItemSummaryCard = ({ item }) => {
+
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  function handleRentClick() {
+    navigate(`/renter/rent/${id}`);
+  }
   return (
       <div className="rounded-3xl border-1 border-app bg-surface p-6 min-h-[350px]">
 
@@ -16,7 +25,9 @@ const ItemSummaryCard = ({ item }) => {
 
       <PricingSelector pricing={item.pricing} />
 
-      <button className="mt-6 w-full rounded-xl bg-bright py-3 font-bold text-background-dark text-app hover:opacity-90 hover:scale-101 transition cursor-pointer">
+
+      <button onClick={handleRentClick} className="mt-6 w-full rounded-xl bg-bright py-3 font-bold text-background-dark text-app hover:opacity-90 hover:scale-101 transition cursor-pointer"
+      >
         Rent Now →
       </button>
 

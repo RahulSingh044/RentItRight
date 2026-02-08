@@ -113,7 +113,7 @@ const Register = ({switchMode, email, setEmail}) => {
           {/* CTA */}
           <button
             type="submit"
-            className="w-full bg-accent hover:bg-accent/90 text-white font-bold 
+            className="w-full bg-bright hover:bg-bright/90 text-card font-extrabold 
                        py-3 px-6 rounded-2xl text-base shadow-lg transition-all 
                        active:scale-[0.98] mt-2 border border-accent/20"
             onClick={(e) => { e.preventDefault(); switchMode("otp"); }}

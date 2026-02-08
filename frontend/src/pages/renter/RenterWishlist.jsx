@@ -1,7 +1,8 @@
 import WishlistHeader from "../../components/renter_ui/wishlist/WishlistHeader";
 import WishlistTabs from "../../components/renter_ui/wishlist/WishlistTabs";
 import WishlistGrid from "../../components/renter_ui/wishlist/WishlistGrid";
-
+import { useState } from "react";
+import { useMemo } from "react";
 
 export default function RenterWishlist() {
 
@@ -14,7 +15,7 @@ export default function RenterWishlist() {
             reviews: 128,
             pricePerDay: 85,
             image:
-                "https://images.unsplash.com/photo-1519183071298-a2962be96c68",
+                "https://images.unsplash.com/photo-1606986601547-a4d886b671b2",
             available: true,
         },
         {
@@ -25,7 +26,7 @@ export default function RenterWishlist() {
             reviews: 42,
             pricePerDay: 120,
             image:
-                "https://images.unsplash.com/photo-1527979809431-a3b3c15b8c79",
+                "https://images.unsplash.com/photo-1667822339262-bf66ed5531a2",
             available: true,
         },
         {
@@ -51,18 +52,30 @@ export default function RenterWishlist() {
             available: false,
         },
     ];
+
+
+    const [activeTab, setActiveTab] = useState("all");
+
+    const filteredItems = useMemo(() => {
+        if (activeTab === "available") {
+            return wishlistItems.filter((item) => item.available);
+        }
+        return wishlistItems;
+    }, [activeTab]);
+
     return (
         <main className="flex-1 overflow-y-auto bg-background-dark">
             <div className="max-w-[1200px] mx-auto px-8 py-10 pt-25">
                 <WishlistHeader
                     title="Your Saved Items"
                     subtitle="Premium gear waiting for your next project."
-                    total={wishlistItems.length}
+                    total={filteredItems.length}
                 />
 
-                <WishlistTabs />
+                <WishlistTabs activeTab={activeTab}
+                    onChange={setActiveTab} />
 
-                <WishlistGrid items={wishlistItems} />
+                <WishlistGrid items={filteredItems} />
             </div>
         </main>
     );
