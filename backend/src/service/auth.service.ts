@@ -43,7 +43,8 @@ export const sendOTPService = async (email: string) => {
 }
 
 export const verifyOTPService = async (otpData: { email: string, otp: string }) => {
-    const isExist = await OTP.findOne({ email: otpData.email });
+    const isExist = await OTP.findOne({ email: otpData.email }).sort({ createdAt: -1 });
+    console.log("backend otp", isExist)
     if (!isExist) {
         logger.info("OTP not found");
         throw new Error("OTP not found");
