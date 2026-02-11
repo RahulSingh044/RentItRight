@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { error } from "node:console";
 
 export interface DecodedToken {
     userId: string,
@@ -12,7 +13,6 @@ declare module "express" {
 }
 
 export const VerifyUser = async (req: Request, res: Response, next: NextFunction) => {
-
     const token = req.cookies?.token;
     if (!token) {
         return res.status(401).json({ success: false, message: "Unauthorized", status: 401 });
