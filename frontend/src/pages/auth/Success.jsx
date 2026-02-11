@@ -8,16 +8,16 @@ const Success = () => {
 
   let timer = 5;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      timer--;
-      if (timer === 0) {
-        navigate("/renter");
-      }
-    }, 1000);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     timer--;
+  //     if (timer === 0) {
+  //       navigate("/renter");
+  //     }
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
+  //   return () => clearTimeout(timer);
+  // }, [navigate]);
 
   return (
     <AuthLayout>
