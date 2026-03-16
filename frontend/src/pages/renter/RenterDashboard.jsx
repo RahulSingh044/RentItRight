@@ -6,8 +6,11 @@ import BookingCard from "../../components/renter_ui/renter_dashboard/BookingCard
 import QuickActions from "../../components/renter_ui/renter_dashboard/QuickActions";
 // import BecomeLenderCard from "../../components/renter_ui/renter_dashboard/BecomeLenderCard";
 import { Link } from "react-router-dom";
+import homeRedirect from "../../hooks/homeRedirect";
+import useAuth from "../../hooks/authHook";
 
 export default function RenterDashboard() {
+  homeRedirect();
 
   const [activeRentals, setActiveRentals] = useState(0);
   const [upcomingRentals, setUpcomingRentals] = useState(0);
@@ -15,6 +18,7 @@ export default function RenterDashboard() {
 
 
   // Fetching Stats from Backend
+  
   const fetchStats = async () => {
     try {
 
@@ -49,6 +53,10 @@ export default function RenterDashboard() {
     }
   }
 
+  // Fetching user names from useAuth()
+  const { user } = useAuth();
+  const name = user?.name;
+
   useEffect(() => {
     fetchStats();
   }, []);
@@ -73,10 +81,6 @@ export default function RenterDashboard() {
       icon: "bookmark",
     },
   ]);
-  /* 🔌 BACKEND READY DATA */
-  const user = {
-    name: "Himanshu",
-  };
 
   const bookings = [
     {
@@ -121,7 +125,7 @@ export default function RenterDashboard() {
     <main className="flex-1 overflow-y-auto bg-background-dark">
       <div className="max-w-[1400px] mx-auto px-8 py-10">
 
-        <DashboardHeader userName={user.name} />
+        <DashboardHeader userName={name} />
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

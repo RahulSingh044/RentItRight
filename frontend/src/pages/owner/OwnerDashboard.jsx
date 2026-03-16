@@ -4,14 +4,16 @@ import RentalsSection from "../../components/owner_ui/dashboard/RentalSection";
 import QuickActions from "../../components/owner_ui/dashboard/QuickActions";
 import { useState, useEffect } from "react";
 
+import homeRedirect from "../../hooks/homeRedirect";
+import useAuth from "../../hooks/authHook";
+
 
 const OwnerDashboard = () => {
-
+  homeRedirect();
 
   const [totalListings, setTotalListings] = useState(0);
   const [activeRentals, setActiveRentals] = useState(0);
   const [totalEarnings, setTotalEarnings] = useState(0);
-
 
   // Fetching Stats from Backend
   const fetchStats = async () => {
@@ -50,9 +52,9 @@ const OwnerDashboard = () => {
   useEffect(() => {
     fetchStats();
   }, []);
-  const user = {
-    name: "Himanshu",
-  };
+
+  // Fetching user names from useAuth()
+  const { user }= useAuth();
 
   const stats = [
     {
