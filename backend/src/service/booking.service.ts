@@ -15,8 +15,10 @@ export const getBookingService = async (userId: string, userRole: string) => {
         : { renter_id: userId };
 
     const bookings = await Booking.find(filter)
-        .select("item_id start_date end_date pricing booking_status payment_status")
+        .select("item_id renter_id owner_id start_date end_date pricing booking_status payment_status createdAt")
         .populate("item_id", "title images")
+        .populate("renter_id", "name profileImage")
+        .populate("owner_id", "name profileImage")
         .sort({ createdAt: -1 })
         .lean();
 
@@ -27,6 +29,8 @@ export const getBookingService = async (userId: string, userRole: string) => {
 
     return bookings.map((booking) => {
         const item = booking.item_id as any;
+        const renter = booking.renter_id as any;
+        const owner = booking.owner_id as any;
 
         return {
             id: booking._id.toString(),
@@ -37,14 +41,23 @@ export const getBookingService = async (userId: string, userRole: string) => {
                     image: item.images?.[0] || null,
                 }
                 : null,
-            date: {
-                startDate: booking.start_date,
-                endDate: booking.end_date,
-            },
+            renterInfo: renter ? {
+                id: renter._id?.toString(),
+                name: renter.name,
+                image: renter.profileImage
+            } : null,
+            ownerInfo: owner ? {
+                id: owner._id?.toString(),
+                name: owner.name,
+                image: owner.profileImage
+            } : null,
+            startDate: booking.start_date,
+            endDate: booking.end_date,
             address: booking.address,
             totalAmount: booking.pricing?.totalAmount ?? 0,
             status: booking.booking_status,
             paymentStatus: booking.payment_status,
+            createdAt: booking.createdAt
         };
     });
 };
@@ -101,7 +114,14 @@ export const createBookingService = async (userId: string, booking: any) => {
     const totalDays = Math.ceil(
         (endDate.getTime() - startDate.getTime()) /
         (1000 * 60 * 60 * 24)
-    );
+    ) + 1; // Including start date
+
+    const pricing = {
+        ...booking.pricing,
+        appliedPricing: totalDays >= 30 ? "monthly" : totalDays >= 7 ? "weekly" : "daily",
+        subtotal: booking.pricing.baseRate - (booking.pricing.discountApplied || 0),
+        ownerEarning: (booking.pricing.baseRate - (booking.pricing.discountApplied || 0)) * 0.90, // 10% platform fee example
+    };
 
     const newBooking = await Booking.create({
         renter_id: userId,
@@ -110,7 +130,7 @@ export const createBookingService = async (userId: string, booking: any) => {
         start_date: startDate,
         end_date: endDate,
         address: booking.address,
-        pricing: booking.pricing,
+        pricing,
         total_days: totalDays,
     });
 
@@ -132,7 +152,7 @@ export const getBookingIdService = async (userId: string, bookingId: string) => 
         $or: [{ renter_id: userId }, { owner_id: userId }],
     })
         .populate("item_id", "title images category")
-        .populate("owner_id", "name email phone")
+        .populate("owner_id", "name email phone profileImage")
         .lean();
 
     if (!booking) {
@@ -309,4 +329,29 @@ export const rejectBookingService = async (
     await booking.save();
 
     logger.info("Booking rejected", { bookingId });
+};
+
+export const completeBookingService = async (userId: string, bookingId: string) => {
+    logger.info("Completing booking", { bookingId, ownerId: userId });
+
+    const booking = await Booking.findOne({
+        _id: bookingId,
+        owner_id: userId,
+    });
+
+    if (!booking) {
+        logger.warn("Booking not found for completion", { bookingId });
+        throw new AppError("Booking not found", 404);
+    }
+
+    if (booking.booking_status !== BookingStatus.CONFIRMED && booking.booking_status !== BookingStatus.ONGOING) {
+        logger.warn("Booking not in a completable state", { bookingId, status: booking.booking_status });
+        throw new AppError("Booking must be confirmed or ongoing to be completed", 400);
+    }
+
+    booking.booking_status = BookingStatus.COMPLETED;
+    await booking.save();
+
+    logger.info("Booking completed", { bookingId });
+    return true;
 };

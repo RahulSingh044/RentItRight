@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, ChevronDown, ImagePlus, Package, DollarSign, IndianRupee } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function EditItemModal({ item, onClose, onSubmit }) {
     const [formData, setFormData] = useState({
@@ -9,7 +10,8 @@ export default function EditItemModal({ item, onClose, onSubmit }) {
         images: [],
         dailyPrice: "",
         weeklyPrice: "",
-        monthlyPrice: ""
+        monthlyPrice: "",
+        securityDeposit: ""
     });
     const [isUploading, setIsUploading] = useState(false);
 
@@ -20,9 +22,10 @@ export default function EditItemModal({ item, onClose, onSubmit }) {
                 category: item.category || "",
                 description: item.description || "Complete professional photography kit including Sony A7R IV, 24-70mm lens, 3 extra batteries, and 128GB SD card. Perfect for high-end production work.",
                 images: item.images || (item.image ? [item.image] : []),
-                dailyPrice: item.pricePerDay || "",
-                weeklyPrice: item.pricePerWeekly || "510",
-                monthlyPrice: item.pricePerMonthly || "1800"
+                dailyPrice: item.price || "",
+                weeklyPrice: item.weeklyPrice || "0",
+                monthlyPrice: item.monthlyPrice || "0",
+                securityDeposit: item.securityDeposit || "0"
             });
         }
     }, [item]);
@@ -88,8 +91,8 @@ export default function EditItemModal({ item, onClose, onSubmit }) {
             const { csrfToken } = await csrfRes.json();
 
             // 2. Submit Data
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/edititem/${item.id}`, {
-                method: "PUT", // or PATCH
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/items/${item.id}`, {
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-Token": csrfToken
@@ -114,21 +117,29 @@ export default function EditItemModal({ item, onClose, onSubmit }) {
         setIsUploading(true);
         try {
             const imageUrls = await uploadImagesToCloudinary(formData.images);
-            const finalData = { 
-                ...formData, 
-                images: imageUrls 
+            const finalData = {
+                title: formData.itemName,
+                description: formData.description,
+                category: formData.category,
+                price: {
+                    daily: Number(formData.dailyPrice),
+                    weekly: Number(formData.weeklyPrice) || 0,
+                    monthly: Number(formData.monthlyPrice) || 0
+                },
+                securityDeposit: Number(formData.securityDeposit) || 0,
+                images: imageUrls.filter(url => url !== null).length > 0 ? imageUrls.filter(url => url !== null) : undefined
             };
 
             // Call backend function
             console.log("Updating Item:", finalData);
             await updateItem(finalData);
 
-            alert("Item updated successfully! 🚀");
+            toast.success("Item updated successfully! 🚀");
             onSubmit(finalData);
             onClose();
         } catch (error) {
             console.error("Submission error:", error);
-            alert(error.message || "Failed to update item. Please try again.");
+            toast.error(error.message || "Failed to update item. Please try again.");
         } finally {
             setIsUploading(false);
         }
@@ -294,6 +305,20 @@ export default function EditItemModal({ item, onClose, onSubmit }) {
                                         value={formData.monthlyPrice}
                                         onChange={handleChange}
                                         className="w-full bg-card border border-divider rounded-xl pl-7 pr-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-bright focus:ring-1 focus:ring-bright/30 transition-all font-bold"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-text-muted mb-1.5">Security Deposit</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm">₹</span>
+                                    <input
+                                        type="text"
+                                        name="securityDeposit"
+                                        value={formData.securityDeposit}
+                                        onChange={handleChange}
+                                        className="w-full bg-card border border-divider rounded-xl pl-7 pr-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-bright focus:ring-1 focus:ring-bright/30 transition-all font-bold"
+                                        required
                                     />
                                 </div>
                             </div>

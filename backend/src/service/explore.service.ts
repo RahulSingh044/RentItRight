@@ -4,6 +4,8 @@ import { AppError } from "../utils/AppError";
 import { esClient, ITEMS_INDEX } from "../config/elasticSearch";
 import logger from "../config/logger";
 import type { QueryDslQueryContainer } from "@elastic/elasticsearch/lib/api/types";
+import { Booking } from "../models/booking.model";
+import { BookingStatus } from "../validatior/booking.validator";
 
 export interface SearchParams {
     q?: string;
@@ -23,7 +25,7 @@ export const getAllItemsService = async (page = 1, limit = 10) => {
 
     logger.info("Fetching items list", { page, limit });
 
-    const query: mongoose.FilterQuery<Item> = { isActive: true };
+    const query = { status: "active" };
     const skip = (page - 1) * limit;
 
     const totalItems = await Item.countDocuments(query);
@@ -43,7 +45,7 @@ export const getAllItemsService = async (page = 1, limit = 10) => {
         };
     }
 
-    const formattedItems = items.map((i) => ({
+    const formattedItems = items.map((i: Item) => ({
         id: i._id.toString(),
         title: i.title,
         image: i.images?.[0] ?? null,
@@ -73,8 +75,8 @@ export const getItemByIdService = async (id: string) => {
 
     logger.info("Fetching item details", { itemId: id });
 
-    const item = await Item.findById(id)
-        .populate<{ ownerId: { _id: Types.ObjectId; name: string; profileImage?: string } }>("ownerId")
+    const item = await Item.findOne({ _id: id, isActive: true, status: "active" })
+        .populate<{ ownerId: { _id: Types.ObjectId; name: string; profileImage?: string; owner?: { rating: { average: number } } } }>("ownerId")
         .lean();
 
     if (!item) {
@@ -82,7 +84,32 @@ export const getItemByIdService = async (id: string) => {
         throw new AppError("No Item found", 404);
     }
 
-    logger.info("Item details fetched", { itemId: id });
+    // Fetch confirmed and ongoing bookings to block dates
+    const bookings = await Booking.find({
+        item_id: id,
+        booking_status: { $in: [BookingStatus.CONFIRMED, BookingStatus.ONGOING] }
+    }).select("start_date end_date").lean();
+
+    const occupiedDates: Date[] = [];
+    bookings.forEach(booking => {
+        let current = new Date(booking.start_date);
+        const end = new Date(booking.end_date);
+        while (current <= end) {
+            occupiedDates.push(new Date(current));
+            current.setDate(current.getDate() + 1);
+        }
+    });
+
+    const allUnavailableDates = [
+        ...(item.availability.unavailableDates || []),
+        ...occupiedDates
+    ];
+
+    logger.info("Item details fetched with occupied dates", {
+        itemId: id,
+        bookedCount: bookings.length,
+        totalUnavailable: allUnavailableDates.length
+    });
 
     return {
         id: item._id.toString(),
@@ -91,13 +118,14 @@ export const getItemByIdService = async (id: string) => {
         images: item.images ?? [],
         category: item.category,
         rating: item.rating.average,
-        price: item.price?.daily ?? 0,
-        unavailableDates: item.availability.unavailableDates,
+        pricing: item.price,
+        unavailableDates: allUnavailableDates,
         owner: item.ownerId
             ? {
                 id: item.ownerId._id.toString(),
                 name: item.ownerId.name,
-                image: item.ownerId.profileImage ?? null,
+                avatar: item.ownerId.profileImage ?? null,
+                rating: (item.ownerId as any).owner?.rating?.average ?? 5.0,
             }
             : null,
     };
@@ -123,6 +151,8 @@ export const indexItemToES = async (item: Item & { _id: Types.ObjectId }) => {
                 subCategory: item.subCategory ?? null,
                 dailyPrice: item.price?.daily ?? 0,
                 rating: item.rating?.average ?? 0,
+                isActive: item.isActive,
+                status: item.status,
             },
         });
 
@@ -165,7 +195,10 @@ export const searchItemsService = async ({
 
     const from = (page - 1) * limit;
 
-    const filters: object[] = [{ term: { isActive: true } }];
+    const filters: object[] = [
+        { term: { isActive: true } },
+        { term: { status: "active" } },
+    ];
 
     if (category) {
         filters.push({ term: { category } });

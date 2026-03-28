@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import GuestLayout from "./layouts/GuestLayout";
 import GuestHome from "./pages/guest/GuestHome";
@@ -18,11 +19,13 @@ import RoleRedirect from "./pages/auth/roleBasedRedirection";
 import OwnerLayout from "./layouts/OwnerLayout";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
 import OwnerListings from "./pages/owner/OwnerListings";
+import OwnerBookings from "./pages/owner/OwnerBookings";
 
 import { NotFound } from "./pages/NotFound";
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
 
         {/* Guest pages */}
@@ -50,6 +53,7 @@ function App() {
         <Route element={<OwnerLayout />}>
           <Route path="/owner" element={<OwnerDashboard />} />
           <Route path="/listings" element={<OwnerListings />} />
+          <Route path="/bookings" element={<OwnerBookings />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

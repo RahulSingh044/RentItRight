@@ -3,6 +3,7 @@ import StatsCard from "../../components/owner_ui/dashboard/StatsCard";
 import RentalsSection from "../../components/owner_ui/dashboard/RentalSection";
 import QuickActions from "../../components/owner_ui/dashboard/QuickActions";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import homeRedirect from "../../hooks/homeRedirect";
 import useAuth from "../../hooks/authHook";
@@ -14,6 +15,7 @@ const OwnerDashboard = () => {
   const [totalListings, setTotalListings] = useState(0);
   const [activeRentals, setActiveRentals] = useState(0);
   const [totalEarnings, setTotalEarnings] = useState(0);
+  const [rentals, setRentals] = useState([]);
 
   // Fetching Stats from Backend
   const fetchStats = async () => {
@@ -41,6 +43,7 @@ const OwnerDashboard = () => {
       setActiveRentals(data.data.activeRentals);
       setTotalListings(data.data.totalListings);
       setTotalEarnings(data.data.totalEarnings);
+      setRentals(data.data.rentals || []);
 
     }
     catch (error) {
@@ -54,7 +57,7 @@ const OwnerDashboard = () => {
   }, []);
 
   // Fetching user names from useAuth()
-  const { user }= useAuth();
+  const { user } = useAuth();
 
   const stats = [
     {
@@ -77,55 +80,15 @@ const OwnerDashboard = () => {
     }
   ];
 
-  const rentals = [
-    {
-      id: "1",
-      title: "Modern Apartment",
-      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      rentedBy: "Sarah M.",
-      status: "Active",
-      pricePerDay: 85,
-      rating: 4.9,
-    },
-    {
-      id: "2",
-      title: "Luxury Sports Car",
-      image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
-      rentedBy: "David L.",
-      status: "Upcoming",
-      pricePerDay: 150,
-      rating: 5.0,
-    },
-    {
-      id: "3",
-      title: "Professional Camera Kit",
-      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32",
-      rentedBy: "Emily R.",
-      status: "Active",
-      pricePerDay: 65,
-      rating: 4.8,
-    },
-  ];
 
   /* ===============================
      HANDLERS (Connect Router Later)
   ================================ */
 
-  const handleAddItem = () => {
-    console.log("Navigate to Add Item Page");
-  };
-
-  const handleViewBookings = () => {
-    console.log("Navigate to Bookings Page");
-  };
-
-  const handleManageListings = () => {
-    console.log("Navigate to Listings Page");
-  };
   const quickActions = [
-    { id: 1, icon: "add_circle", label: "Add New Item", onClick: handleAddItem },
-    { id: 2, icon: "receipt_long", label: "View Bookings", onClick: handleViewBookings },
-    { id: 3, icon: "inventory_2", label: "Manage Listings", onClick: handleManageListings },
+    { id: 1, icon: "add_circle", label: "Add New Item", to: "listings" },
+    { id: 2, icon: "receipt_long", label: "View Bookings", to: "bookings" },
+    { id: 3, icon: "inventory_2", label: "Manage Listings", to: "listings" },
   ];
 
   return (
@@ -141,10 +104,42 @@ const OwnerDashboard = () => {
           ))}
         </div>
 
+    
         <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-12 lg:col-span-8">
-            <RentalsSection rentals={rentals} />
+
+          <div className="col-span-12 lg:col-span-8 flex flex-col h-full">
+            {rentals?.length > 0 ? (
+              <RentalsSection rentals={rentals} />
+            ) : (
+              <div className="flex-1 bg-surface border border-app/40 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-full">
+                <div className="w-24 h-24 bg-bright/10 rounded-full flex items-center justify-center mb-6 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-bright/20 to-transparent blur-xl"></div>
+                  <span className="material-symbols-outlined text-6xl text-bright relative">
+                    inventory_2
+                  </span>
+                </div>
+                
+                <h3 className="text-2xl font-black text-text-primary mb-2 tracking-tight">
+                  No Active Rentals Yet
+                </h3>
+                
+                <p className="text-text-secondary text-sm max-w-sm mb-8 leading-relaxed font-medium">
+                  Your rental dashboard looks a bit empty. List your items and watch the rentals roll in!
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                  <Link
+                    to="/listings"
+                    className="flex items-center justify-center gap-2 bg-bright text-surface px-8 py-4 rounded-[1.25rem] font-black hover:scale-[1.01] active:scale-99 transition-all cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined font-bold">add_circle</span>
+                    List New Item
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
+
 
           <div className="col-span-12 lg:col-span-4">
             <QuickActions actions={quickActions} />
