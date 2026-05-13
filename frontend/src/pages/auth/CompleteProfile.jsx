@@ -11,8 +11,13 @@ import {
 import toast from "react-hot-toast";
 
 
+import useAuth from "../../hooks/authHook";
+import { useEffect } from "react";
+
+
 export default function CompleteProfile({ switchMode }) {
 
+  const { user, loading: authLoading } = useAuth();
   const [intent, setIntent] = useState("renter");
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -24,6 +29,18 @@ export default function CompleteProfile({ switchMode }) {
   const [pincode, setPincode] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: prev.fullName || user.name || "",
+      }));
+      if (user.profileImage && !previewUrl) {
+        setPreviewUrl(user.profileImage);
+      }
+    }
+  }, [user]);
 
   // Convert ProfileImage to CloudinaryImage
   const convertImage = async (profilePic) => {
@@ -65,6 +82,26 @@ export default function CompleteProfile({ switchMode }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!profileImage && !previewUrl) {
+      toast.error("Please upload a profile photo");
+      return;
+    }
+
+    if (!formData.fullName.trim()) {
+      toast.error("Please enter your full name");
+      return;
+    }
+
+    if (!pincode.trim()) {
+      toast.error("Please enter your pincode");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(formData.phone)) {
+      toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
 
 
     try {
@@ -112,7 +149,7 @@ export default function CompleteProfile({ switchMode }) {
               state: state,
               pincode: pincode
             },
-            profileImage: await convertImage(profileImage)
+            profileImage: profileImage ? await convertImage(profileImage) : previewUrl
           })
         }
       );
@@ -135,7 +172,7 @@ export default function CompleteProfile({ switchMode }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 overflow-y-auto">
 
         {/* LEFT */}
         <div className="bg-app/80 p-8 flex flex-col items-center justify-center space-y-8 border-r border-white/5">
@@ -236,11 +273,13 @@ export default function CompleteProfile({ switchMode }) {
               <div className="relative group">
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary w-4 h-4 group-focus-within:text-emerald-500 transition-colors" />
                 <input
+                  type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  maxLength="10"
                   className="w-full rounded-2xl bg-app border-2 border-card px-11 py-3.5 text-white placeholder:text-text-secondary focus:outline-none focus:border-bright transition-all font-medium"
-                  placeholder="+91 XXXXX XXXXX"
+                  placeholder="10-digit mobile number"
                 />
               </div>
             </div>
@@ -287,7 +326,7 @@ function IntentCard({ active, title, subtitle, icon, onClick }) {
   );
 }
 
-function Input({ label, placeholder, icon, name, value, onChange }) {
+function Input({ label, placeholder, icon, name, value, onChange, ...props }) {
   return (
     <div className="space-y-1.5">
       <label className="text-[10px] font-bold tracking-wider text-text-secondary uppercase ml-1">
@@ -302,6 +341,7 @@ function Input({ label, placeholder, icon, name, value, onChange }) {
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          {...props}
           className="w-full rounded-2xl bg-app border-2 border-card px-11 py-3.5 text-white placeholder:text-text-secondary focus:outline-none focus:border-bright"
         />
       </div>

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { loginSchema, registerSchema } from "../validatior/auth.schema";
 import { OTPValidator } from "../validatior/OTP.validator";
 import { loginService, registerService, sendOTPService, verifyOTPService, MeService } from "../service/auth.service";
@@ -11,6 +12,7 @@ export interface userInterface {
   name: string;
   email: string;
   role: string;
+  phone?: string;
   profileImage: string;
 }
 
@@ -48,8 +50,8 @@ export const verifyOTP = catchAsync(async (req: Request, res: Response) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     maxAge: 24 * 60 * 60 * 1000,
   });
 
@@ -67,8 +69,8 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     maxAge: 24 * 60 * 60 * 1000,
   });
 
@@ -94,7 +96,40 @@ export const me = catchAsync(async (req: Request, res: Response) => {
 export const logout = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
   });
   res.status(200).json({ success: true, message: "Logged out" });
 };
+
+export const googleCallback = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as any;
+  if (!user) {
+    throw new AppError("Authentication failed", 401);
+  }
+
+  // Generate JWT token
+  const token = jwt.sign(
+    { userId: user._id, userRole: user.roles },
+    process.env.JWT_SECRET!,
+    { expiresIn: "24h" }
+  );
+
+  // Set cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  
+  // If user doesn't have a phone, they haven't completed their profile
+  if (!user.phone) {
+    return res.redirect(`${frontendUrl}/?auth=success&mode=completeProfile`);
+  }
+
+  // Otherwise, fallback to role based redirection
+  res.redirect(`${frontendUrl}/role-redirect`);
+});

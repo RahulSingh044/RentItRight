@@ -11,10 +11,6 @@ import {
 } from "lucide-react";
 
 const Register = ({ switchMode, email, setEmail }) => {
-  const [error, setError] = useState({
-    email: "",
-    password: "",
-  });
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -25,16 +21,34 @@ const Register = ({ switchMode, email, setEmail }) => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!checked) {
-      toast.error("Please accept the terms and conditions")
+
+    if (!user.email.trim()) {
+      toast.error("Email is required");
       return;
     }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (!user.password.trim()) {
+      toast.error("Password is required");
+      return;
+    }
+
     if (user.password.length < 6) {
-      setError((prev) => ({ ...prev, password: "Password must be at least 6 characters" }));
+      toast.error("Password must be at least 6 characters");
       return;
     }
-    setLoading(true);
+
+    if (!checked) {
+      toast.error("Please accept the terms and conditions");
+      return;
+    }
+
     try {
+      setLoading(true);
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -44,12 +58,7 @@ const Register = ({ switchMode, email, setEmail }) => {
       })
       const data = await res.json();
       if (!data.success) {
-        setError({
-          email: data.message.toLowerCase().includes("exists") || data.message.toLowerCase().includes("email") ? data.message : "",
-          password: data.message.toLowerCase().includes("password") ? data.message : ""
-        });
-        console.log(error)
-        throw new Error(data.message);
+        throw new Error(data.message || "Registration failed");
       }
 
       const sendOtp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/send-otp`, {
@@ -61,18 +70,30 @@ const Register = ({ switchMode, email, setEmail }) => {
       })
       const otpData = await sendOtp.json();
       if (!otpData.success) {
-        throw new Error(otpData.message);
+        throw new Error(otpData.message || "Failed to send OTP");
       }
 
+      toast.success("Verification code sent! 📩");
       setEmail(user.email);
       switchMode("otp");
 
     } catch (error) {
-      console.log("Error in register", error);
+      console.error("Error in register", error.message);
+      let errorMessage = error.message;
+      if (errorMessage.toLowerCase().includes("limit") || errorMessage.toLowerCase().includes("too many")) {
+        errorMessage = "Too many attempts, please try again after 10 minutes";
+      } else if (errorMessage === "Failed to fetch") {
+        errorMessage = "Server is unreachable";
+      }
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   }
+
+  const handleGoogleAuth = () => {
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google?flow=register`;
+  };
 
 
   return (
@@ -107,15 +128,11 @@ const Register = ({ switchMode, email, setEmail }) => {
                 value={user.email}
                 onChange={(e) => {
                   setUser({ ...user, email: e.target.value })
-                  setError((prev) => ({ ...prev, email: "" }));
                 }}
                 className="form-input w-full pl-12 pr-4 py-3 bg-app border-1  border-text-secondary/30 rounded-2xl text-text-primary placeholder:text-text-secondary/30 focus:outline-none transition
                 focus:border-bright"
               />
             </div>
-            {error.email && (
-              <p className="text-white font-bold text-sm mt-2 bg-error/15 p-2 rounded-lg text-center border border-error/80">{error.email}</p>
-            )}
           </div>
 
           {/* Password + Confirm */}
@@ -134,15 +151,8 @@ const Register = ({ switchMode, email, setEmail }) => {
                   placeholder="••••••••"
                   value={user.password}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    setUser({ ...user, password: val });
-                    if (val.length > 0 && val.length < 6) {
-                      setError((prev) => ({ ...prev, password: "Password must be at least 6 characters" }));
-                    } else {
-                      setError((prev) => ({ ...prev, password: "" }));
-                    }
+                    setUser({ ...user, password: e.target.value });
                   }}
-                  required
                   className="form-input w-full pl-12 pr-4 py-3 bg-app border rounded-2xl text-text-primary placeholder:text-text-secondary/30 focus:outline-none transition focus:border-bright border-text-secondary/30"
                 />
                 <button
@@ -153,9 +163,6 @@ const Register = ({ switchMode, email, setEmail }) => {
                   {showPassword ? <EyeOff /> : <Eye />}
                 </button>
               </div>
-              {error.password && (
-                <p className="text-white font-bold text-sm mt-2 bg-error/15 p-2 rounded-lg text-center border border-error/80">{error.password}</p>
-              )}
             </div>
           </div>
 
@@ -163,8 +170,8 @@ const Register = ({ switchMode, email, setEmail }) => {
           <div className="flex items-start gap-3 py-2">
             <input
               type="checkbox"
-              value={checked}
-              onChange={(e) => { setChecked(true) }}
+              checked={checked}
+              onChange={() => setChecked(!checked)}
               className="mt-1 rounded border-border-muted bg-background-dark 
                          text-accent focus:ring-accent"
             />
@@ -206,9 +213,11 @@ const Register = ({ switchMode, email, setEmail }) => {
         {/* Google */}
         <button
           type="button"
+          onClick={handleGoogleAuth}
           className="flex items-center justify-center gap-3 w-full 
                      bg-app hover:bg-app/80 text-text-primary font-medium 
-                     py-3 px-4 rounded-2xl transition-all"
+                     py-3 px-4 rounded-2xl transition-all cursor-pointer
+                     border border-text-secondary/10"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
